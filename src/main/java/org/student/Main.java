@@ -1,58 +1,38 @@
 package org.student;
 
-import java.util.Arrays;
-//import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
-//        Scanner scanner = new Scanner(System.in);
-
-        // Define student IDs
-        int[] studentIdList = {1001, 1002, 1003};
-
-        // Define students' grades
+        int[] studentIdList = {1001, 1002};
         char[][] studentsGrades = {
                 {'A', 'A', 'A', 'B'},
-                {'A', 'B', 'B'},
-                {'B', 'B', 'C', 'C'}
+                {'A', 'B', ' '}
         };
 
-        // Display students and their grades
-        System.out.println("Student IDs and their respective grades:");
-        for (int i = 0; i < studentIdList.length; i++) {
-            System.out.println("Student ID: " + studentIdList[i] + ", Grades: " + Arrays.toString(studentsGrades[i]));
+        try {
+            System.out.println("Calculating GPAs...");
+            double[] gpaArray = StudentUtil.calculateGPA(studentIdList, studentsGrades);
+            for (int i = 0; i < studentIdList.length; i++) {
+                System.out.printf("Student ID: %d, GPA: %.4f%n", studentIdList[i], gpaArray[i]);
+            }
+        } catch (MissingGradeException e) {
+            System.err.println("Error: " + e.getMessage() + " (Student ID: " + e.getStudentId() + ")");
         }
 
-        // Call calculateGPA method
-        double[] gpas = StudentUtil.calculateGPA(studentIdList, studentsGrades);
-
-        // Display GPA results
-        System.out.println("\nCalculated GPAs:");
-        for (int i = 0; i < gpas.length; i++) {
-            System.out.printf("Student ID: %d, GPA: %.4f%n", studentIdList[i], gpas[i]);
+        System.out.println("\nFiltering students by GPA range (3.2 - 3.5)...");
+        try {
+            int[] filteredStudents = StudentUtil.getStudentsByGPA(3.2, 3.5, studentIdList, studentsGrades);
+            if (filteredStudents != null) {
+                System.out.print("Students in range: ");
+                for (int id : filteredStudents) {
+                    System.out.print(id + " ");
+                }
+                System.out.println();
+            } else {
+                System.out.println("Invalid GPA range.");
+            }
+        } catch (InvalidDataException e) {
+            System.err.println("Data error: " + e.getMessage());
+            System.err.println("Root cause: " + e.getCause().getMessage());
         }
-
-        // Taking input from user to test getStudentsByGPA method
-//        System.out.print("\nEnter lower GPA limit: ");
-//        double lower = scanner.nextDouble();
-        double lower = 3;
-
-//        System.out.print("Enter upper GPA limit: ");
-//        double higher = scanner.nextDouble();
-        double higher = 4;
-
-        // Call getStudentsByGPA method
-        int[] filteredStudents = StudentUtil.getStudentsByGPA(lower, higher, studentIdList, studentsGrades);
-
-        // Display filtered students
-        if (filteredStudents == null) {
-            System.out.println("\nInvalid range! Lower limit should be <= Upper limit and non-negative.");
-        } else if (filteredStudents.length == 0) {
-            System.out.println("\nNo students found in the given GPA range.");
-        } else {
-            System.out.println("\nStudents in GPA range " + lower + " to " + higher + ": " + Arrays.toString(filteredStudents));
-        }
-
-//        scanner.close();
     }
 }
